@@ -34,6 +34,7 @@ class InvestigationList extends LitElement {
         margin: 5px;
         border: 1px solid #dedede;
         border-radius: 5px;
+        background: rgba(255,255,255, .5);
       }
 
     `

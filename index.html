@@ -12,19 +12,21 @@
   <title>Document</title>
 </head>
 <body>
-
-  <div class="container py-5">
-    <form>
-      <div class="form-group">
-        <textarea class="form-control" id="raw-text" cols="30" rows="10"></textarea>
+  <div class="container-fluid py-5 bg-light" style="min-height: 100vh;">
+    <div class="row">
+      <div class="col-12 col-lg-6 col-xl-4 p-2 py-xl-5 border border-white">
+        <form>
+          <div class="form-group">
+            <textarea class="form-control" id="raw-text" cols="30" rows="10"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">轉換</button>
+        </form>
       </div>
-      <button type="submit" class="btn btn-primary">轉換</button>
-    </form>
 
-    <div class="card">
-      <div class="card-body" id="result"><investigation-list></investigation-list></div>
+      <div class="col-12 col-lg-6 col-xl-8 p-2 p-xl-5 border border-white">
+        <div id="result"><investigation-list></investigation-list></div>
+      </div>
     </div>
   </div>
-
 </body>
 </html>
