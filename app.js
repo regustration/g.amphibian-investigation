@@ -1,7 +1,7 @@
-import './components/template.js'
+import './components/investigation-list.js'
 import SPECIES from './config/species.js'
-
-const ENV_STRINGS = '流水 溪流 瀑布 水域 水岸 水植 暫水 暫水岸 暫水植 暫植積 喬木 灌木 底層 竹林 長草 短草 邊坡 乾溝 建物 車道 步道 空地'.split(' ')
+import ENV_ABBRS from './config/envs.js'
+import { pushSpeciesRecord, pushRecord, pushDetail } from './utils.js'
 
 let SPECIES_ABBRS = []
 SPECIES.forEach(family =>
@@ -12,7 +12,6 @@ SPECIES.forEach(family =>
   )
 )
 const regSpecies = new RegExp(`(${SPECIES_ABBRS.join('|')})`)
-console.log(SPECIES_ABBRS.join('|'));
 const dataSplit = data => {
   if (data.indexOf('卵') === 0 || data.indexOf('蝌蚪') === 0) {
     return { form: data }
@@ -75,7 +74,7 @@ const parseText = str => {
 
 
       // 資料棲地
-      } else if (ENV_STRINGS.indexOf(p) >= 0) {
+      } else if (ENV_ABBRS.indexOf(p) >= 0) {
         tempRecords.push([p, tempDetails])
         tempDetails = []
 
@@ -119,52 +118,3 @@ $(() => {
     $('investigation-list')[0].result = parseText($.trim($rawText.val()))
   })
 })
-
-
-function pushSpeciesRecord (species, records, finalRecords) {
-  if (species && records.length) {
-    // duplicated species data
-    const dupSpecies = finalRecords.find(r => {
-      const { genus: g, species: s } = r.species
-      const { genus: gt, species: st } = species
-      console.log(`${g} ${s}`, ` ${gt} ${st}`);
-      return `${g} ${s}` === `${gt} ${st}`
-    })
-    if (dupSpecies) {
-      pushRecord(dupSpecies.records, records)
-
-      dupSpecies.records.sort((a, b) => ENV_STRINGS.indexOf(a[0]) - ENV_STRINGS.indexOf(b[0]))
-    } else {
-      finalRecords.push({
-        species,
-        records: records.sort((a, b) => ENV_STRINGS.indexOf(a[0]) - ENV_STRINGS.indexOf(b[0]))
-      })
-    }
-  }
-}
-
-function pushRecord (records, newRecords) {
-  newRecords.forEach(record => {
-    const dupRecord = records.find(r => r[0] === record[0])
-    if (dupRecord) {
-      record[1].forEach(detail =>
-        pushDetail(dupRecord[1], detail)
-      )
-    } else {
-      records.push(record)
-    }
-  })
-}
-
-function pushDetail (details, newDetail) {
-  const dupDetail = details.find(d =>
-    d.form === newDetail.form && d.action === newDetail.action
-  )
-  if (dupDetail) {
-    if (typeof dupDetail.count === 'number') {
-      dupDetail.count += newDetail.count
-    }
-  } else {
-    details.push(newDetail)
-  }
-}
