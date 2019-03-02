@@ -17,6 +17,11 @@ class InvestigationList extends LitElement {
       h3 {
         margin: 10px 0;
       }
+      h3 small {
+        color: #aaa;
+        font-weight: normal;
+        font-style: italic;
+      }
       p {
         margin: .25em 0;
       }
@@ -42,11 +47,12 @@ class InvestigationList extends LitElement {
   }
 
   _listItem (res) {
-    const {species, dataSet} = res
+    const { species, records } = res
+    const { family, genus, species: sp, abbr } = species
     return html`
     <div class="data-card">
-      <h3>${species}</h3>
-      ${dataSet.map(data => {
+      <h3>${abbr} <br><small>${genus} ${sp}</small></h3>
+      ${records .map(data => {
         const [env, d] = data
         const { form, count, action } = d
         return html`<p><b>${env}</b> ${d.map(({ form, count, action }) => html`<span class="data-item">${form} ${count} ${action}</span>`)}</p>`
