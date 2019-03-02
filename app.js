@@ -38,15 +38,18 @@ const parseText = str => {
       console.log(`line ${line} is an empty line.`);
       return
     }
+    let startPos = 0
     let strPos = 0
     let parts = s.split(/\s/)
     parts.forEach((p, i) => {
       if (!p) {
         strPos += 1
+        // 文字紀錄開頭可以空幾行再開始
+        if (i === startPos) startPos += 1
         return
       }
       let isSpeciesPart = SPECIES_ABBRS.indexOf(p) >= 0
-      if (i === 0 && line === 0 && !isSpeciesPart) {
+      if (i === startPos && line === 0 && !isSpeciesPart) {
         throw new Error(`first one should be a species name.`)
       }
 
