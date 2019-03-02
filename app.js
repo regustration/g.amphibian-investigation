@@ -1,7 +1,7 @@
 import './components/investigation-list.js'
 import SPECIES from './config/species.js'
 import ENV_ABBRS from './config/envs.js'
-import { pushSpeciesRecord, pushRecord, pushDetail } from './utils.js'
+import { parseRecordDetail, pushSpeciesRecord, pushRecord, pushDetail, addSeeCount } from './utils.js'
 
 let SPECIES_ABBRS = []
 SPECIES.forEach(family =>
@@ -12,19 +12,6 @@ SPECIES.forEach(family =>
   )
 )
 const regSpecies = new RegExp(`(${SPECIES_ABBRS.join('|')})`)
-const dataSplit = data => {
-  if (data.indexOf('卵') === 0 || data.indexOf('蝌蚪') === 0) {
-    return { form: data }
-  } else {
-    const m = data.match(/(抱接|鳴|幼|公|母|成)(\d+)(\S*)/)
-    return m
-      ? {
-        form: m[1],
-        count: Number(m[2]),
-        action: m[3]
-      } : null
-  }
-}
 
 const parseText = str => {
   const res = []
@@ -35,7 +22,7 @@ const parseText = str => {
   str.split(/\r?\n/).forEach((s, line) => {
     s = $.trim(s)
     if (!s) {
-      console.log(`line ${line} is an empty line.`);
+      console.log(`line ${line + 1} is an empty line.`);
       return
     }
     let startPos = 0
@@ -83,11 +70,11 @@ const parseText = str => {
 
       // 動作
       } else {
-        const detail = dataSplit(p)
+        const detail = parseRecordDetail(p)
         if (detail) {
           pushDetail(tempDetails, detail)
         } else {
-          console.warn(`line ${line} col ${strPos} is an undefined data.`);
+          console.warn(`line ${line + 1} col ${strPos} is an undefined data.`);
         }
       }
 
@@ -104,8 +91,54 @@ const parseText = str => {
 
   // 整合資料
   // TODO: 整合資料
+  let see = {
+    froglet: 0,
+    male: 0,
+    female: 0,
+    grown: 0
+  }
+  res.see = Object.assign({}, see)
+  res.hear = 0
+  res.forEach(species => {
+    const spSee = Object.assign({}, see)
+    let spHear = 0
+    species.records.forEach(record => {
+      record[1].forEach(detail => {
+        const { form, count } = detail
+        switch (form) {
+          case '幼':
+            spSee.froglet += count
+            break
+          case '公':
+            spSee.male += count
+            break
+          case '母':
+            spSee.female += count
+            break
+          case '成':
+            spSee.grown += count
+            break
+          case '抱接':
+            spSee.male += count
+            spSee.female += count
+            break
+          case '鳴':
+            spHear += count
+          default:
+            break
+        }
+      })
+    })
+    species.summary = {
+      see: spSee,
+      hear: spHear
+    }
+    res.hear += spHear
+    addSeeCount(res.see, spSee)
+  })
 
 
+  console.log(res);
   return res.sort((a, b) =>{
     const { species: sa } = a
     const { species: sb } = b

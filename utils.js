@@ -1,5 +1,19 @@
 import ENV_ABBRS from './config/envs.js'
 
+export function parseRecordDetail (str) {
+  if (str === '卵' || str === '蝌蚪') {
+    return { form: str }
+  } else {
+    const m = str.match(/(抱接|鳴|幼|公|母|成)(\d+)(\S*)/)
+    return m
+      ? {
+        form: m[1],
+        count: Number(m[2]),
+        action: m[3]
+      } : null
+  }
+}
+
 export function pushSpeciesRecord (species, records, finalRecords) {
   if (species && records.length) {
     // duplicated species data
@@ -45,4 +59,11 @@ export function pushDetail (details, newDetail) {
   } else {
     details.push(newDetail)
   }
+}
+
+export function addSeeCount (seeObj, newSeeObj) {
+  seeObj.froglet += newSeeObj.froglet
+  seeObj.male += newSeeObj.male
+  seeObj.female += newSeeObj.female
+  seeObj.grown += newSeeObj.grown
 }
