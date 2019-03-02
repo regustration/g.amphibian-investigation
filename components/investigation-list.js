@@ -10,8 +10,15 @@ class InvestigationList extends LitElement {
   static get styles () {
     return css`
       :host {
+        display: block;
+      }
+      :host > p {
+        text-align: right;
+      }
+      :host > div {
         display: grid;
-        grid-template-columns: repeat(3, .33fr);
+        grid-template-columns: repeat(3, .3333fr);
+        grid-gap: 5px;
         font-size: 14px;
       }
       h3 {
@@ -31,7 +38,6 @@ class InvestigationList extends LitElement {
 
       .data-card {
         padding: 10px 15px;
-        margin: 5px;
         border: 1px solid #dedede;
         border-radius: 5px;
         background: rgba(255,255,255, .5);
@@ -43,7 +49,10 @@ class InvestigationList extends LitElement {
   render () {
     const { result } = this
     return html`
-      ${result ? result.map(res => this._listItem(res)) : '沒東西！'}
+      ${!result ? '沒東西！' : html`
+        <p>種類總數： ${result.length} 種</p>
+        <div>${result.map(res => this._listItem(res))}</div>
+      `}
     `
   }
 
