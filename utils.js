@@ -1,16 +1,36 @@
-import ENV_ABBRS from './config/envs.js'
+import { HABITATS_ABBRS } from './config/envs.js'
 
 export function parseRecordDetail (str) {
   if (str === '卵' || str === '蝌蚪') {
-    return { form: str }
+    return [{ form: str }]
   } else {
     const m = str.match(/(抱接|鳴|幼|公|母|成)(\d+)(\S*)/)
-    return m
-      ? {
-        form: m[1],
-        count: Number(m[2]),
-        action: m[3]
-      } : null
+    if (m) {
+      const count = Number(m[2])
+      if (m[1] === '抱接') {
+        return [
+          {
+            form: '公',
+            count,
+            action: '配對'
+          }, {
+            form: '母',
+            count,
+            action: '配對'
+          }
+        ]
+      } else {
+        let action = m[3]
+        if (action === '鳴') action = '鳴叫'
+        return [{
+          form: m[1],
+          count,
+          action
+        }]
+      }
+    } else {
+      return null
+    }
   }
 }
 
@@ -24,12 +44,10 @@ export function pushSpeciesRecord (species, records, finalRecords) {
     })
     if (dupSpecies) {
       pushRecord(dupSpecies.records, records)
-
-      dupSpecies.records.sort((a, b) => ENV_ABBRS.indexOf(a[0]) - ENV_ABBRS.indexOf(b[0]))
     } else {
       finalRecords.push({
         species,
-        records: records.sort((a, b) => ENV_ABBRS.indexOf(a[0]) - ENV_ABBRS.indexOf(b[0]))
+        records
       })
     }
   }
@@ -37,7 +55,7 @@ export function pushSpeciesRecord (species, records, finalRecords) {
 
 export function pushRecord (records, newRecords) {
   newRecords.forEach(record => {
-    const dupRecord = records.find(r => r[0] === record[0])
+    const dupRecord = records.find(r => r[0].detailId === record[0].detailId)
     if (dupRecord) {
       record[1].forEach(detail =>
         pushDetail(dupRecord[1], detail)
@@ -48,17 +66,19 @@ export function pushRecord (records, newRecords) {
   })
 }
 
-export function pushDetail (details, newDetail) {
-  const dupDetail = details.find(d =>
-    d.form === newDetail.form && d.action === newDetail.action
-  )
-  if (dupDetail) {
-    if (typeof dupDetail.count === 'number') {
-      dupDetail.count += newDetail.count
+export function pushDetail (details, newDetails) {
+  newDetails.forEach(newDetail => {
+    const dupDetail = details.find(d =>
+      d.form === newDetail.form && d.action === newDetail.action
+    )
+    if (dupDetail) {
+      if (typeof dupDetail.count === 'number') {
+        dupDetail.count += newDetail.count
+      }
+    } else {
+      details.push(newDetail)
     }
-  } else {
-    details.push(newDetail)
-  }
+  })
 }
 
 export function addSeeCount (seeObj, newSeeObj) {

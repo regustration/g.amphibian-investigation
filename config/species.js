@@ -4,13 +4,13 @@ const SPECIES = [
       [
         'Bufo', [
           [
-            'bankorensis', ['盤古蟾蜍', '盤古']
+            'bankorensis', 1, ['盤古蟾蜍', '盤古']
           ]
         ]
       ], [
         'Duttaphrynus', [
           [
-            'melanostictus', ['黑眶蟾蜍', '黑眶', '黑框']
+            'melanostictus', 2, ['黑眶蟾蜍', '黑眶', '黑框']
           ]
         ]
       ]
@@ -20,21 +20,21 @@ const SPECIES = [
       [
         'Fejervarya', [
           [
-            'cancrivora', ['海蛙']
+            'cancrivora', 22, ['海蛙']
           ], [
-            'limnocharis', ['澤蛙']
+            'limnocharis', 14, ['澤蛙']
           ]
         ]
       ], [
         'Hoplobatrachus', [
           [
-            'rugulosus', ['虎皮蛙', '虎皮', '蛤蟆']
+            'rugulosus', 18, ['虎皮蛙', '虎皮', '蛤蟆']
           ]
         ]
       ], [
         'Limnonectes', [
           [
-            'fujianensis', ['福建大頭蛙', '大頭']
+            'fujianensis', 12, ['福建大頭蛙', '大頭']
           ]
         ]
       ]
@@ -44,7 +44,7 @@ const SPECIES = [
       [
         'Hyla', [
           [
-            'chinensis', ['中國樹蟾', '樹蟾', '中國']
+            'chinensis', 3, ['中國樹蟾', '樹蟾', '中國']
           ]
         ]
       ]
@@ -54,23 +54,23 @@ const SPECIES = [
       [
         'Kaloula', [
           [
-            'pulchra pulchra', ['亞洲錦蛙', '亞錦']
+            'pulchra pulchra', 8, ['亞洲錦蛙', '亞錦']
           ]
         ]
       ], [
         'Microhyla', [
           [
-            'butleri', ['巴氏小雨蛙', '巴氏']
+            'butleri', 4, ['巴氏小雨蛙', '巴氏']
           ], [
-            'fissipes', ['小雨蛙', '小雨']
+            'fissipes', 6, ['小雨蛙', '小雨']
           ], [
-            'heymonsi', ['黑蒙西氏小雨蛙', '黑蒙']
+            'heymonsi', 5, ['黑蒙西氏小雨蛙', '黑蒙']
           ]
         ]
       ], [
         'Micryletta', [
           [
-            'steinegeri', ['史丹吉氏小雨蛙', '史丹', '屎蛋']
+            'steinegeri', 7, ['史丹吉氏小雨蛙', '史丹', '屎蛋']
           ]
         ]
       ]
@@ -80,45 +80,45 @@ const SPECIES = [
       [
         'Babina', [
           [
-            'adenopleura', ['腹斑蛙', '腹斑']
+            'adenopleura', 9, ['腹斑蛙', '腹斑']
           ], [
-            'okinavana', ['豎琴蛙', '豎琴']
+            'okinavana', 17, ['豎琴蛙', '豎琴']
           ]
         ]
       ], [
         'Hylarana', [
           [
-            'guentheri', ['貢德氏赤蛙', '貢德', '狗蛙']
+            'guentheri', 11, ['貢德氏赤蛙', '貢德', '狗蛙']
           ], [
-            'latoucii', ['拉都希氏赤蛙', '拉都']
+            'latoucii', 13, ['拉都希氏赤蛙', '拉都']
           ], [
-            'taipehensis', ['台北赤蛙', '北赤']
+            'taipehensis', 21, ['台北赤蛙', '北赤']
           ]
         ]
       ], [
         'Lithobates', [
           [
-            'catesbeianus', ['美洲牛蛙', '牛蛙', '美牛']
+            'catesbeianus', 10, ['美洲牛蛙', '牛蛙', '美牛']
           ]
         ]
       ], [
         'Odorrana', [
           [
-            'swinhoana', ['斯文豪氏赤蛙', '斯文', '鳥蛙']
+            'swinhoana', 20, ['斯文豪氏赤蛙', '斯文', '鳥蛙']
           ]
         ]
       ], [
         'Pelophylax', [
           [
-            'fukienensis', ['金線蛙', '金線']
+            'fukienensis', 16, ['金線蛙', '金線']
           ]
         ]
       ], [
         'Rana', [
           [
-            'longicrus', ['長腳赤蛙', '長腳']
+            'longicrus', 15, ['長腳赤蛙', '長腳']
           ], [
-            'sauteri', ['梭德氏赤蛙', '梭德']
+            'sauteri', 19, ['梭德氏赤蛙', '梭德']
           ]
         ]
       ]
@@ -128,45 +128,45 @@ const SPECIES = [
       [
         'Buergeria', [
           [
-            'japonica', ['日本樹蛙', '日本']
+            'japonica', 23, ['日本樹蛙', '日本']
           ], [
-            'otai', ['太田樹蛙', '太田']
+            'otai', 36, ['太田樹蛙', '太田']
           ], [
-            'robusta', ['褐樹蛙', '褐樹']
+            'robusta', 24, ['褐樹蛙', '褐樹']
           ]
         ]
       ], [
         'Kurixalus', [
           [
-            'berylliniris', ['碧眼樹蛙', '碧眼']
+            'berylliniris', 34, ['碧眼樹蛙', '碧眼']
           ], [
-            'eiffingeri', ['艾氏樹蛙', '艾氏']
+            'eiffingeri', 25, ['艾氏樹蛙', '艾氏']
           ], [
-            'idiootocus', ['面天樹蛙', '面天']
+            'idiootocus', 26, ['面天樹蛙', '面天']
           ], [
-            'wangi', ['王氏樹蛙', '王氏']
+            'wangi', 35, ['王氏樹蛙', '王氏']
           ]
         ]
       ], [
         'Polypedates', [
           [
-            'braueri', ['布氏樹蛙', '布氏']
+            'braueri', 27, ['布氏樹蛙', '布氏']
           ], [
-            'megacephalus', ['斑腿樹蛙', '斑腿']
+            'megacephalus', 33, ['斑腿樹蛙', '斑腿']
           ]
         ]
       ], [
         'Rhacophorus', [
           [
-            'arvalis', ['諸羅樹蛙', '諸羅']
+            'arvalis', 28, ['諸羅樹蛙', '諸羅']
           ], [
-            'aurantiventris', ['橙腹樹蛙', '橙腹']
+            'aurantiventris', 29, ['橙腹樹蛙', '橙腹']
           ], [
-            'moltrechti', ['莫氏樹蛙', '莫氏']
+            'moltrechti', 30, ['莫氏樹蛙', '莫氏']
           ], [
-            'prasinatus', ['翡翠樹蛙', '翡翠']
+            'prasinatus', 31, ['翡翠樹蛙', '翡翠']
           ], [
-            'taipeianus', ['台北樹蛙', '北樹']
+            'taipeianus', 32, ['台北樹蛙', '北樹']
           ]
         ]
       ]

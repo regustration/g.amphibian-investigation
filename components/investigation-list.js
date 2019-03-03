@@ -1,4 +1,5 @@
 import { LitElement, html, css } from 'https://unpkg.com/lit-element@2.0.1/lit-element.js?module'
+import BEHAVIORS from '../config/behaviors.js'
 
 class InvestigationList extends LitElement {
   static get properties () {
@@ -70,18 +71,103 @@ class InvestigationList extends LitElement {
         display: flex;
         justify-content: space-between;
       }
+
+      .button {
+        width: 120px;
+        height: 40px;
+        background: orange;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-decoration: none;
+        border-radius: 5px;
+      }
     `
   }
 
   render () {
     const { result } = this
     return html`
-      ${!result ? '沒東西！' : html`
+      ${!result || !result.length ? '沒東西！' : html`
+        <a href="#" class="button" @click="${this.outputApiData}">API Data</a>
         <p>種類總數： ${result.length} 種</p>
         ${this._summaryOverview(result.see, result.hear)}
         <div class="list-block">${result.map(res => this._listItem(res))}</div>
       `}
     `
+  }
+
+  outputApiData (e) {
+    e.preventDefault()
+    const apiDatas = []
+    this.result.forEach(res => {
+      const { species, records } = res
+      // 建立物種資料
+      const apiData = {
+        frog_id: species.id
+      }
+      records.forEach(record => {
+        const { typeId: habitat_id, detailId: habitat_p1_id } = record[0]
+        // 建立棲地資料
+        Object.assign(apiData, { habitat_id, habitat_p1_id })
+
+        // 建立紀錄
+        record[1].forEach(d => {
+          let { form, count: amount, action } = d
+          if (form === '鳴') {
+            if (amount >= 50) amount = '>50'
+            else if (amount >= 40) amount = '40-49'
+            else if (amount >= 30) amount = '30-39'
+            else if (amount >= 20) amount = '20-29'
+            else if (amount >= 10) amount = '10-19'
+
+            apiDatas.push(Object.assign({}, apiData, {
+              observing_method_id: 1,
+              amount,
+              living_type_id: 4,
+              living_type_ids: 4,
+              behavior_id: 2,
+              behavior_ids: 2,
+              memo: null,
+              _: Date.parse(new Date())
+            }))
+          } else if (form === '卵' || form === '蝌蚪') {
+            apiDatas.push(Object.assign({}, apiData, {
+              observing_method_id: 0,
+              amount: '不計數',
+              living_type_id: form === '卵' ? 1 : 2,
+              living_type_ids: form === '卵' ? 1 : 2,
+              behavior_id: 0,
+              behavior_ids: 0,
+              memo: null,
+              _: Date.parse(new Date())
+            }))
+          } else {
+            let behavior = BEHAVIORS.indexOf(action)
+            if (behavior < 0) behavior = 8
+
+            if (form === '幼') form = 3
+            else if (form === '公') form = 4
+            else if (form  === '母') form = 5
+            else if (form  === '成') form = 6
+
+            apiDatas.push(Object.assign({}, apiData, {
+              observing_method_id: 0,
+              amount,
+              living_type_id: form,
+              living_type_ids: form,
+              behavior_id: behavior,
+              behavior_ids: behavior,
+              memo: null,
+              _: Date.parse(new Date())
+            }))
+          }
+        })
+      })
+    })
+
+    console.log(JSON.stringify(apiDatas));
   }
 
   _hear (hear) {
@@ -154,8 +240,9 @@ class InvestigationList extends LitElement {
       <div class="card-body">
         ${records .map(data => {
           const [env, d] = data
+          const { type, detail } = env
           const { form, count, action } = d
-          return html`<p><b>${env}</b> ${d.map(({ form, count, action }) => html`<span class="data-item">${form} ${count} ${action}</span>`)}</p>`
+          return html`<p><b>${type} ${detail}</b> ${d.map(({ form, count, action }) => html`<span class="data-item">${form} ${count} ${action}</span>`)}</p>`
         })}
       </div>
     </div>

@@ -1,17 +1,16 @@
 import './components/investigation-list.js'
 import SPECIES from './config/species.js'
-import ENV_ABBRS from './config/envs.js'
+import { HABITATS, HABITATS_ABBRS } from './config/envs.js'
 import { parseRecordDetail, pushSpeciesRecord, pushRecord, pushDetail, addSeeCount } from './utils.js'
 
-let SPECIES_ABBRS = []
+const SPECIES_ABBRS = []
 SPECIES.forEach(family =>
   family[1].forEach(genus =>
     genus[1].forEach(species =>
-      SPECIES_ABBRS.push(...species[1])
+      SPECIES_ABBRS.push(...species[2])
     )
   )
 )
-const regSpecies = new RegExp(`(${SPECIES_ABBRS.join('|')})`)
 
 const parseText = str => {
   const res = []
@@ -50,13 +49,14 @@ const parseText = str => {
           tempDetails = []
         }
 
-        SPECIES.find(f => f[1].find(g => g[1].find(s => s[1].find(abbr => {
+        SPECIES.find(f => f[1].find(g => g[1].find(s => s[2].find(abbr => {
           if (abbr === p) {
             tempSpecies = {
               family: f[0],
               genus: g[0],
               species: s[0],
-              abbr: s[1][0]
+              abbr: s[2][0],
+              id: s[1]
             }
             return true
           }
@@ -64,8 +64,24 @@ const parseText = str => {
 
 
       // 資料棲地
-      } else if (ENV_ABBRS.indexOf(p) >= 0) {
-        pushRecord(tempRecords, [[p, tempDetails]])
+      } else if (HABITATS_ABBRS.indexOf(p) >= 0) {
+        let tempHabitat
+        HABITATS.find(type =>
+          type[2].find(detail =>
+            detail[2].find(abbr => {
+              if (abbr === p) {
+                tempHabitat = {
+                  type: type[1],
+                  typeId: type[0],
+                  detail: detail[1],
+                  detailId: detail[0]
+                }
+              }
+            })
+          )
+        )
+
+        pushRecord(tempRecords, [[tempHabitat, tempDetails]])
         tempDetails = []
 
       // 動作
@@ -100,6 +116,10 @@ const parseText = str => {
   res.see = Object.assign({}, see)
   res.hear = 0
   res.forEach(species => {
+    species.records.sort((a, b) =>
+      a[0].typeId - b[0].typeId
+      || a[0].detailId - b[0].detailId
+    )
     const spSee = Object.assign({}, see)
     let spHear = 0
     species.records.forEach(record => {
@@ -117,10 +137,6 @@ const parseText = str => {
             break
           case '成':
             spSee.grown += count
-            break
-          case '抱接':
-            spSee.male += count
-            spSee.female += count
             break
           case '鳴':
             spHear += count
