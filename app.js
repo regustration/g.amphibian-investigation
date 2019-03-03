@@ -65,7 +65,7 @@ const parseText = str => {
 
       // 資料棲地
       } else if (ENV_ABBRS.indexOf(p) >= 0) {
-        tempRecords.push([p, tempDetails])
+        pushRecord(tempRecords, [[p, tempDetails]])
         tempDetails = []
 
       // 動作
