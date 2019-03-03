@@ -1,4 +1,5 @@
 import './components/investigation-list.js'
+import './components/warning-toast.js'
 import SPECIES from './config/species.js'
 import { HABITATS, HABITATS_ABBRS } from './config/envs.js'
 import { parseRecordDetail, pushSpeciesRecord, pushRecord, pushDetail, addSeeCount } from './utils.js'
@@ -12,6 +13,7 @@ SPECIES.forEach(family =>
   )
 )
 
+let message = []
 const parseText = str => {
   const res = []
   let tempSpecies = ''
@@ -21,6 +23,7 @@ const parseText = str => {
   str.split(/\r?\n/).forEach((s, line) => {
     s = $.trim(s)
     if (!s) {
+      message.push(`line ${line + 1} is an empty line.`)
       console.log(`line ${line + 1} is an empty line.`);
       return
     }
@@ -36,7 +39,8 @@ const parseText = str => {
       }
       let isSpeciesPart = SPECIES_ABBRS.indexOf(p) >= 0
       if (i === startPos && line === 0 && !isSpeciesPart) {
-        throw new Error(`first one should be a species name.`)
+        message.push(`Should started with a species name.`)
+        throw new Error(`Should started with a species name.`)
       }
 
       // 物種名稱
@@ -90,6 +94,7 @@ const parseText = str => {
         if (detail) {
           pushDetail(tempDetails, detail)
         } else {
+          message.push(`line ${line + 1} col ${strPos} is an undefined data.`)
           console.warn(`line ${line + 1} col ${strPos} is an undefined data.`);
         }
       }
@@ -153,7 +158,6 @@ const parseText = str => {
     addSeeCount(res.see, spSee)
   })
 
-
   console.log(res);
   return res.sort((a, b) =>{
     const { species: sa } = a
@@ -164,9 +168,16 @@ const parseText = str => {
 
 $(() => {
   const $rawText = $('#raw-text')
-  const $res = $('#result')
+  const $res = $('investigation-list')[0]
   $('button').click(e => {
     e.preventDefault()
-    $('investigation-list')[0].result = parseText($.trim($rawText.val()))
+    try {
+      $res.result = parseText($.trim($rawText.val()))
+    } catch (e) {
+      $res.result = []
+    } finally {
+      $('warning-toast')[0].input = message
+      message = []
+    }
   })
 })

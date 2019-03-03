@@ -22,6 +22,7 @@ export function parseRecordDetail (str) {
       } else {
         let action = m[3]
         if (action === '鳴') action = '鳴叫'
+        else if (action === '聚') action = '聚集'
         return [{
           form: m[1],
           count,
