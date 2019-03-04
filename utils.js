@@ -59,7 +59,7 @@ export function pushRecord (records, newRecords) {
     const dupRecord = records.find(r => r[0].detailId === record[0].detailId)
     if (dupRecord) {
       record[1].forEach(detail =>
-        pushDetail(dupRecord[1], detail)
+        pushDetail(dupRecord[1], [detail])
       )
     } else {
       records.push(record)

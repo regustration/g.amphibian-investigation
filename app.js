@@ -23,7 +23,6 @@ const parseText = str => {
   str.split(/\r?\n/).forEach((s, line) => {
     s = $.trim(s)
     if (!s) {
-      message.push(`line ${line + 1} is an empty line.`)
       console.log(`line ${line + 1} is an empty line.`);
       return
     }
@@ -174,6 +173,7 @@ $(() => {
     try {
       $res.result = parseText($.trim($rawText.val()))
     } catch (e) {
+      console.warn(e);
       $res.result = []
     } finally {
       $('warning-toast')[0].input = message
