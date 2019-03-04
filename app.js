@@ -8,11 +8,10 @@ const SPECIES_ABBRS = []
 SPECIES.forEach(family =>
   family[1].forEach(genus =>
     genus[1].forEach(species =>
-      SPECIES_ABBRS.push(`#${species[1]}`, ...species[2])
+      SPECIES_ABBRS.push(...species[2])
     )
   )
 )
-console.log({SPECIES_ABBRS, HABITATS_ABBRS});
 
 let message = []
 const parseText = str => {
@@ -53,34 +52,18 @@ const parseText = str => {
           tempRecords = []
           tempDetails = []
         }
-        if (p[0] === '#') {
-          const speciesId = Number(p.substring(1))
-          SPECIES.find(f => f[1].find(g => g[1].find(s => {
-            if (s[1] === speciesId) {
-              tempSpecies = {
-                family: f[0],
-                genus: g[0],
-                species: s[0],
-                abbr: s[2][0],
-                id: s[1]
-              }
-              return true
+        SPECIES.find(f => f[1].find(g => g[1].find(s => s[2].find(abbr => {
+          if (abbr === p) {
+            tempSpecies = {
+              family: f[0],
+              genus: g[0],
+              species: s[0],
+              abbr: s[2][0],
+              id: s[1]
             }
-          })))
-        } else {
-          SPECIES.find(f => f[1].find(g => g[1].find(s => s[2].find(abbr => {
-            if (abbr === p) {
-              tempSpecies = {
-                family: f[0],
-                genus: g[0],
-                species: s[0],
-                abbr: s[2][0],
-                id: s[1]
-              }
-              return true
-            }
-          }))))
-        }
+            return true
+          }
+        }))))
 
         if (!tempSpecies) {
           message.push(`${line + 1}:${strPos} is an undefined species: ${p}.`)
@@ -91,23 +74,20 @@ const parseText = str => {
       } else if (HABITATS_ABBRS.indexOf(p) >= 0) {
         let tempHabitat
         if (p[0] === '@') {
-          const [typeId, detailId] = p.substring(1).split('-').map(Number)
-          HABITATS.find(type => {
-            if (type[0] === typeId) {
-              type[2].find(detail => {
-                if (detail[0] === detailId) {
-                  tempHabitat = {
-                    type: type[1],
-                    typeId: type[0],
-                    detail: detail[1],
-                    detailId: detail[0]
-                  }
-                  return true
+          const detailId = Number(p.substring(1))
+          HABITATS.find(type =>
+            type[2].find(detail => {
+              if (detail[0] === detailId) {
+                tempHabitat = {
+                  type: type[1],
+                  typeId: type[0],
+                  detail: detail[1],
+                  detailId: detail[0]
                 }
-              })
-              return true
-            }
-          })
+                return true
+              }
+            })
+          )
         } else {
           HABITATS.find(type =>
             type[2].find(detail =>

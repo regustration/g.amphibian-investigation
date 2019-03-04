@@ -1,5 +1,4 @@
 import { LitElement, html, css } from 'https://unpkg.com/lit-element@2.0.1/lit-element.js?module'
-import BEHAVIORS from '../config/behaviors.js'
 
 class InvestigationList extends LitElement {
   static get properties () {
@@ -144,7 +143,7 @@ class InvestigationList extends LitElement {
               _: Date.parse(new Date())
             }))
           } else {
-            let behavior = BEHAVIORS.indexOf(action)
+            let behavior = action.id
             if (behavior < 0) behavior = 8
 
             if (form === '幼') form = 3
@@ -229,6 +228,7 @@ class InvestigationList extends LitElement {
   }
 
   _listItem (res) {
+    const { _listItemBehavior } = this
     const { species, records, summary } = res
     const { family, genus, species: sp, abbr } = species
     return html`
@@ -238,15 +238,25 @@ class InvestigationList extends LitElement {
         <div>${this._summarySpecies(summary.see, summary.hear)}</div>
       </div>
       <div class="card-body">
-        ${records .map(data => {
-          const [env, d] = data
-          const { type, detail } = env
-          const { form, count, action } = d
-          return html`<p><b>${type} ${detail}</b> ${d.map(({ form, count, action }) => html`<span class="data-item">${form} ${count} ${action}</span>`)}</p>`
+        ${records.map(data => {
+          const [habitat, d] = data
+          const { type, detail } = habitat
+          return html`<p><b>${type} ${detail}</b> ${d.map(_listItemBehavior)}</p>`
         })}
       </div>
     </div>
     `
+  }
+
+  _listItemBehavior ({ form, count, action } = {}) {
+    if (['卵', '蝌蚪'].indexOf(form) >= 0) {
+      return html`<span class="data-item">${form}</span>`
+    } else if (form === '鳴') {
+      return html`<span class="data-item">${form} ${count}</span>`
+    } else {
+      return html`<span class="data-item">${form} ${count} ${action.name}</span>`
+
+    }
   }
 }
 

@@ -1,10 +1,13 @@
 import { HABITATS_ABBRS } from './config/envs.js'
+import { BEHAVIORS, BEHAVIORS_ABBRS } from './config/behaviors.js'
 
+const behaviorRegStr = BEHAVIORS_ABBRS.map(str => str[0] === '$' ? `\\${str}` : str).join('|')
+const recordDetailReg = new RegExp(`(抱接|鳴|幼|公|母|成)(\\d+)(${behaviorRegStr})?(:\S+)?`)
 export function parseRecordDetail (str) {
   if (str === '卵' || str === '蝌蚪') {
     return [{ form: str }]
   } else {
-    const m = str.match(/(抱接|鳴|幼|公|母|成)(\d+)(\S*)/)
+    const m = str.match(recordDetailReg)
     if (m) {
       const count = Number(m[2])
       if (m[1] === '抱接') {
@@ -12,17 +15,42 @@ export function parseRecordDetail (str) {
           {
             form: '公',
             count,
-            action: '配對'
+            action: { id: 5, name: '配對' }
           }, {
             form: '母',
             count,
-            action: '配對'
+            action: { id: 5, name: '配對' }
           }
         ]
       } else {
         let action = m[3]
-        if (action === '鳴') action = '鳴叫'
-        else if (action === '聚') action = '聚集'
+        if (action) {
+          if (action[0] === '$') {
+            const behaviorId = Number(action.substring(1)) - 1
+            const bArr = BEHAVIORS.find(b => b[0] === behaviorId)
+            if (bArr) {
+              action = {
+                id: behaviorId,
+                name: bArr[1][0]
+              }
+            } else {
+              console.warn('找不到行為');
+            }
+          } else {
+            const bArr = BEHAVIORS.find(b => b[1].find(abbr => abbr === action))
+            if (bArr) {
+              action = {
+                id: bArr[0],
+                name: bArr[1][0]
+              }
+            } else {
+              console.warn('找不到行為');
+            }
+          }
+        } else {
+          action = { id: 8, name: '單獨' }
+        }
+
         return [{
           form: m[1],
           count,
