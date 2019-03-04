@@ -1,4 +1,4 @@
-import { HABITATS_ABBRS } from './config/envs.js'
+import { HABITATS_ABBRS } from './config/habitats.js'
 import { BEHAVIORS, BEHAVIORS_ABBRS } from './config/behaviors.js'
 
 const behaviorRegStr = BEHAVIORS_ABBRS.map(str => str[0] === '$' ? `\\${str}` : str).join('|')

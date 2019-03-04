@@ -1,7 +1,7 @@
 import './components/investigation-list.js'
 import './components/warning-toast.js'
 import SPECIES from './config/species.js'
-import { HABITATS, HABITATS_ABBRS } from './config/envs.js'
+import { HABITATS, HABITATS_ABBRS } from './config/habitats.js'
 import { parseRecordDetail, pushSpeciesRecord, pushRecord, pushDetail, addSeeCount } from './utils.js'
 
 const SPECIES_ABBRS = []
