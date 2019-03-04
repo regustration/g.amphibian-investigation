@@ -41,6 +41,6 @@ export const HABITATS = [
 export const HABITATS_ABBRS = []
 HABITATS.forEach(type =>
   type[2].forEach(detail =>
-    HABITATS_ABBRS.push(...detail[2])
+    HABITATS_ABBRS.push(`@${type[0]}-${detail[0]}`, ...detail[2])
   )
 )

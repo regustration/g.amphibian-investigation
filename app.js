@@ -8,10 +8,11 @@ const SPECIES_ABBRS = []
 SPECIES.forEach(family =>
   family[1].forEach(genus =>
     genus[1].forEach(species =>
-      SPECIES_ABBRS.push(...species[2])
+      SPECIES_ABBRS.push(`#${species[1]}`, ...species[2])
     )
   )
 )
+console.log({SPECIES_ABBRS, HABITATS_ABBRS});
 
 let message = []
 const parseText = str => {
@@ -48,41 +49,87 @@ const parseText = str => {
         if (tempRecords.length) {
           pushSpeciesRecord(tempSpecies, tempRecords, res)
 
+          tempSpecies = null
           tempRecords = []
           tempDetails = []
         }
-
-        SPECIES.find(f => f[1].find(g => g[1].find(s => s[2].find(abbr => {
-          if (abbr === p) {
-            tempSpecies = {
-              family: f[0],
-              genus: g[0],
-              species: s[0],
-              abbr: s[2][0],
-              id: s[1]
+        if (p[0] === '#') {
+          const speciesId = Number(p.substring(1))
+          SPECIES.find(f => f[1].find(g => g[1].find(s => {
+            if (s[1] === speciesId) {
+              tempSpecies = {
+                family: f[0],
+                genus: g[0],
+                species: s[0],
+                abbr: s[2][0],
+                id: s[1]
+              }
+              return true
             }
-            return true
-          }
-        }))))
+          })))
+        } else {
+          SPECIES.find(f => f[1].find(g => g[1].find(s => s[2].find(abbr => {
+            if (abbr === p) {
+              tempSpecies = {
+                family: f[0],
+                genus: g[0],
+                species: s[0],
+                abbr: s[2][0],
+                id: s[1]
+              }
+              return true
+            }
+          }))))
+        }
 
+        if (!tempSpecies) {
+          message.push(`${line + 1}:${strPos} is an undefined species: ${p}.`)
+          throw new Error(`${line + 1}:${strPos} is an undefined species: ${p}.`)
+        }
 
       // 資料棲地
       } else if (HABITATS_ABBRS.indexOf(p) >= 0) {
         let tempHabitat
-        HABITATS.find(type =>
-          type[2].find(detail =>
-            detail[2].find(abbr => {
-              if (abbr === p) {
-                tempHabitat = {
-                  type: type[1],
-                  typeId: type[0],
-                  detail: detail[1],
-                  detailId: detail[0]
+        if (p[0] === '@') {
+          const [typeId, detailId] = p.substring(1).split('-').map(Number)
+          HABITATS.find(type => {
+            if (type[0] === typeId) {
+              type[2].find(detail => {
+                if (detail[0] === detailId) {
+                  tempHabitat = {
+                    type: type[1],
+                    typeId: type[0],
+                    detail: detail[1],
+                    detailId: detail[0]
+                  }
+                  return true
                 }
-              }
-            })
+              })
+              return true
+            }
+          })
+        } else {
+          HABITATS.find(type =>
+            type[2].find(detail =>
+              detail[2].find(abbr => {
+                if (abbr === p) {
+                  tempHabitat = {
+                    type: type[1],
+                    typeId: type[0],
+                    detail: detail[1],
+                    detailId: detail[0]
+                  }
+                  return true
+                }
+              })
+            )
           )
-        )
+        }
+
+        if (!tempHabitat) {
+          message.push(`${line + 1}:${strPos} is an undefined habitat: ${p}.`)
+          throw new Error(`${line + 1}:${strPos} is an undefined habitat: ${p}.`)
+        }
 
         pushRecord(tempRecords, [[tempHabitat, tempDetails]])
         tempDetails = []
@@ -93,8 +140,8 @@ const parseText = str => {
         if (detail) {
           pushDetail(tempDetails, detail)
         } else {
-          message.push(`line ${line + 1} col ${strPos} is an undefined data.`)
-          console.warn(`line ${line + 1} col ${strPos} is an undefined data.`);
+          message.push(`${line + 1}:${strPos} is an undefined data.`)
+          console.warn(`${line + 1}:${strPos} is an undefined data.`);
         }
       }
 
