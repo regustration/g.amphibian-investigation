@@ -29,9 +29,6 @@ class InvestigationList extends LitElement {
       p {
         margin: .25em 0;
       }
-      .data-item + .data-item::before {
-        content: ', '
-      }
 
       .data-card {
         padding: 10px 15px;
@@ -50,7 +47,16 @@ class InvestigationList extends LitElement {
         background: #f1f1f1;
       }
       .card-body > p:nth-child(even) {
-        background: #dfdfdf;
+        background: #e5e5e5;
+      }
+
+      .data-item {
+        border-radius: 5px;
+        padding: 0 5px;
+        margin: 2px 3px;
+        box-shadow: 0 0 1px black;
+        display: inline-block;
+        background: #f6e09f;
       }
 
       .summary {
@@ -255,7 +261,6 @@ class InvestigationList extends LitElement {
       return html`<span class="data-item">${form} ${count}</span>`
     } else {
       return html`<span class="data-item">${form} ${count} ${action.name}</span>`
-
     }
   }
 }

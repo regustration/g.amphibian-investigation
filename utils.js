@@ -1,65 +1,67 @@
 import { HABITATS_ABBRS } from './config/habitats.js'
 import { BEHAVIORS, BEHAVIORS_ABBRS } from './config/behaviors.js'
 
-const behaviorRegStr = BEHAVIORS_ABBRS.map(str => str[0] === '$' ? `\\${str}` : str).join('|')
-const recordDetailReg = new RegExp(`(抱接|鳴|幼|公|母|成)(\\d+)(${behaviorRegStr})?(:\S+)?`)
+const recordDetailReg = new RegExp(`(抱接|鳴|幼|公|母|成|蝌蚪|卵\\S?)(\\d+)(${BEHAVIORS_ABBRS.join('|')})?(:\\S+)?`)
+
 export function parseRecordDetail (str) {
-  if (str === '卵' || str === '蝌蚪') {
-    return [{ form: str }]
-  } else {
-    const m = str.match(recordDetailReg)
-    if (m) {
-      const count = Number(m[2])
-      if (m[1] === '抱接') {
-        return [
-          {
-            form: '公',
-            count,
-            action: { id: 5, name: '配對' }
-          }, {
-            form: '母',
-            count,
-            action: { id: 5, name: '配對' }
-          }
-        ]
-      } else {
-        let action = m[3]
-        if (action) {
-          if (action[0] === '$') {
-            const behaviorId = Number(action.substring(1)) - 1
-            const bArr = BEHAVIORS.find(b => b[0] === behaviorId)
-            if (bArr) {
-              action = {
-                id: behaviorId,
-                name: bArr[1][0]
-              }
-            } else {
-              console.warn('找不到行為');
+  const m = str.match(recordDetailReg)
+  if (m) {
+    if (m[1] === '蝌蚪' || m[1][0] === '卵') {
+      return {
+        form: m[1]
+      }
+    }
+    const count = Number(m[2])
+    if (m[1] === '抱接') {
+      return [
+        {
+          form: '公',
+          count,
+          action: { id: 5, name: '配對' }
+        }, {
+          form: '母',
+          count,
+          action: { id: 5, name: '配對' }
+        }
+      ]
+    } else {
+      let action = m[3]
+      if (action) {
+        if (action[0] === '#') {
+          const behaviorId = Number(action.substring(1)) - 1
+          const bArr = BEHAVIORS.find(b => b[0] === behaviorId)
+          if (bArr) {
+            action = {
+              id: behaviorId,
+              name: bArr[1][0]
             }
           } else {
-            const bArr = BEHAVIORS.find(b => b[1].find(abbr => abbr === action))
-            if (bArr) {
-              action = {
-                id: bArr[0],
-                name: bArr[1][0]
-              }
-            } else {
-              console.warn('找不到行為');
-            }
+            console.warn('找不到行為');
           }
         } else {
-          action = { id: 8, name: '單獨' }
+          const bArr = BEHAVIORS.find(b => b[1].find(abbr => abbr === action))
+          if (bArr) {
+            action = {
+              id: bArr[0],
+              name: bArr[1][0]
+            }
+          } else {
+            console.warn('找不到行為');
+          }
         }
-
-        return [{
-          form: m[1],
-          count,
-          action
-        }]
+      } else {
+        action = { id: 8, name: '單獨' }
       }
-    } else {
-      return null
+
+      return [{
+        form: m[1],
+        count,
+        action
+      }]
     }
+  } else {
+    console.warn('看不懂：' + str);
+    return null
   }
 }
 

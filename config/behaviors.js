@@ -19,5 +19,5 @@ export const BEHAVIORS = [
 
 export const BEHAVIORS_ABBRS = []
 BEHAVIORS.forEach(b =>
-  BEHAVIORS_ABBRS.push(`$${b[0] + 1}`, ...b[1])
+  BEHAVIORS_ABBRS.push(`#${b[0] + 1}`, ...b[1])
 )

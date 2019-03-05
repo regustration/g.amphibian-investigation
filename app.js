@@ -120,8 +120,8 @@ const parseText = str => {
         if (detail) {
           pushDetail(tempDetails, detail)
         } else {
-          message.push(`${line + 1}:${strPos} is an undefined data.`)
-          console.warn(`${line + 1}:${strPos} is an undefined data.`);
+          message.push(`${line + 1}:${strPos} is an undefined data: ${p}`)
+          console.warn(`${line + 1}:${strPos} is an undefined data: ${p}`);
         }
       }
 
