@@ -74,14 +74,14 @@ const parseText = str => {
       } else if (HABITATS_ABBRS.indexOf(p) >= 0) {
         let tempHabitat
         if (p[0] === '@') {
-          const detailId = Number(p.substring(1))
+          const detailDisplayId = Number(p.substring(1))
           HABITATS.find(type =>
             type[2].find(detail => {
-              if (detail[0] === detailId) {
+              if (detail[1] === detailDisplayId) {
                 tempHabitat = {
                   type: type[1],
                   typeId: type[0],
-                  detail: detail[1],
+                  detail: detail[2],
                   detailId: detail[0]
                 }
                 return true
@@ -91,12 +91,12 @@ const parseText = str => {
         } else {
           HABITATS.find(type =>
             type[2].find(detail =>
-              detail[2].find(abbr => {
+              detail[3].find(abbr => {
                 if (abbr === p) {
                   tempHabitat = {
                     type: type[1],
                     typeId: type[0],
-                    detail: detail[1],
+                    detail: detail[2],
                     detailId: detail[0]
                   }
                   return true
